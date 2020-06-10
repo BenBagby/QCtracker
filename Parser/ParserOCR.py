@@ -21,7 +21,7 @@ def get_pdf_text(PDF_file, page_num_list):
         outfile = "Parser/Output/out_text.txt"
         f = open(outfile, "a")
 
-        for i in range(1, filelimit + 1):
+        for i in page_num_list:
             filename = path+"/page_"+str(i)+".jpg"
             text = str(pytesseract.image_to_string(Image.open(filename)))
             text = text.replace('-\n', '')
