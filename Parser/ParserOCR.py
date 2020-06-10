@@ -1,8 +1,6 @@
 from PIL import Image
 import pytesseract
-import sys
 from pdf2image import convert_from_path
-import os
 import tempfile
 
 def get_pdf_text(PDF_file, page_num_list):
@@ -13,24 +11,20 @@ def get_pdf_text(PDF_file, page_num_list):
 
         for page in pages:
             filename = path+"/page_" + str(image_counter) + ".jpg"
-            print(filename)
             page.save(filename, 'JPEG')
             image_counter += 1
 
-        filelimit = image_counter - 1
-        outfile = "Parser/Output/out_text.txt"
-        f = open(outfile, "a")
-
+        text_list = []
         for i in page_num_list:
             filename = path+"/page_"+str(i)+".jpg"
             text = str(pytesseract.image_to_string(Image.open(filename)))
             text = text.replace('-\n', '')
-            f.write(text)
+            text_list.append(text)
 
-        f.close()
-
+    return(text_list)
 
 if __name__ == '__main__':
     PDF_file = 'Parser/Input/2500_20040002.pdf'
     page_num_list = [3, 8, 13]
-    get_pdf_text(PDF_file, page_num_list)
+    text_list = get_pdf_text(PDF_file, page_num_list)
+    print(text_list)
