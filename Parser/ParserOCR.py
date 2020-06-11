@@ -2,6 +2,23 @@ from PIL import Image
 import pytesseract
 from pdf2image import convert_from_path
 import tempfile
+from pathlib import Path
+import PyPDF2
+
+def get_img_page_numbers(PDF_file):
+
+    pdfFileObj = open(PDF_file, 'rb')
+    pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+
+    page_num_list = []
+    for pageNum in range(0, pdfReader.numPages):
+
+        pageObj = pdfReader.getPage(pageNum)
+        pageContent = pageObj.extractText()
+        if len(pageContent) < 50:
+            page_num_list.append(pageNum)
+
+    return page_num_list
 
 def get_pdf_text(PDF_file, page_num_list):
 
@@ -19,12 +36,16 @@ def get_pdf_text(PDF_file, page_num_list):
             filename = path+"/page_"+str(i)+".jpg"
             text = str(pytesseract.image_to_string(Image.open(filename)))
             text = text.replace('-\n', '')
+            text = text.replace('\n', ' ')
             text_list.append(text)
 
     return(text_list)
 
 if __name__ == '__main__':
-    PDF_file = 'Parser/Input/2500_20040002.pdf'
-    page_num_list = [3, 8, 13]
-    text_list = get_pdf_text(PDF_file, page_num_list)
-    print(text_list)
+    path = Path('Parser/Input').glob('**/*.pdf')
+    for PDF_file in path:
+        page_num_list = get_img_page_numbers(PDF_file)
+        print(page_num_list)
+        
+        text_list = get_pdf_text(PDF_file, page_num_list)
+        print(text_list)
