@@ -11,7 +11,8 @@ rx_dict = {
     'Location': re.compile(r'Well\s*:\s*(?P<value>[\S\s]*)(?=\sSample Psig)'),
     'Sample Date': re.compile(r'Sample Date\/Time:\s*(?P<value>\d{1,2}\/\d{1,2}\/\d{4})'),
     'Shrinkage Factor': re.compile(r'Shrinkage Factor\s*(?P<value>[0-9.]*)'),
-    'GOR': re.compile(r'Flash Factor\s*(?P<value>[0-9.]*)')
+    'GOR': re.compile(r'Flash Facto\s*(?P<value>[0-9.]*)'),
+    'blank': re.compile(r'zzzzzzzzzzzz\s*(?P<value>[0-9.]*)')
 }
 
 
@@ -58,8 +59,10 @@ if __name__ == '__main__':
         print(page_num_list)
 
         text_list = get_pdf_text(PDF_file, page_num_list)
-        print(text_list[4])
+        print(text_list[3])
 
+        data = []
         for key, rx in rx_dict.items():
             match = rx.search(text_list[4])
-            print(match.groupdict())
+            if match is not None:
+                print(match.groupdict())
