@@ -4,6 +4,16 @@ from pdf2image import convert_from_path
 import tempfile
 from pathlib import Path
 import PyPDF2
+import re
+
+rx_dict = {
+    'Sample Number': re.compile(r'CERTIFICATE OF ANALYSIS\s*(?P<value>[0-9]{8}[-][0-9]{3}[A-Z])'),
+    'Location': re.compile(r'Well\s*:\s*(?P<value>[\S\s]*)(?=\sSample Psig)'),
+    'Sample Date': re.compile(r'Sample Date\/Time:\s*(?P<value>\d{1,2}\/\d{1,2}\/\d{4})'),
+    'Shrinkage Factor': re.compile(r'Shrinkage Factor\s*(?P<value>[0-9.]*)'),
+    'GOR': re.compile(r'Flash Factor\s*(?P<value>[0-9.]*)')
+}
+
 
 def get_img_page_numbers(PDF_file):
 
@@ -46,6 +56,10 @@ if __name__ == '__main__':
     for PDF_file in path:
         page_num_list = get_img_page_numbers(PDF_file)
         print(page_num_list)
-        
+
         text_list = get_pdf_text(PDF_file, page_num_list)
-        print(text_list)
+        print(text_list[4])
+
+        for key, rx in rx_dict.items():
+            match = rx.search(text_list[4])
+            print(match.groupdict())
