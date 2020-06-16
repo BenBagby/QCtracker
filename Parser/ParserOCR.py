@@ -91,11 +91,20 @@ def get_pdf_data(PDF_file):
     return pdf_data
 
 
-if __name__ == '__main__':
-    path = find_ext('Parser/Input','pdf',ig_case=True)
+def get_folder_data(folder_path):
+    path = find_ext(folder_path,'pdf',ig_case=True)
+    folder_data = []
     for PDF_file in path:
         pdf_data = get_pdf_data(PDF_file)
-        print(pdf_data)
+        folder_data.extend(pdf_data)
+
+    return folder_data
+
+
+if __name__ == '__main__':
+    folder_data = get_folder_data('Parser/Input')
+    print(folder_data)
+
 
 
 
