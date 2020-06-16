@@ -5,15 +5,21 @@ import tempfile
 from pathlib import Path
 import PyPDF2
 import re
+from collections import ChainMap
+
 
 rx_dict = {
     'Sample Number': re.compile(r'CERTIFICATE OF ANALYSIS\s*(?P<value>[0-9]{8}[-][0-9]{3}[A-Z])'),
     'Location': re.compile(r'Well\s*:\s*(?P<value>[\S\s]*)(?=\sSample Psig)'),
     'Sample Date': re.compile(r'Sample Date\/Time:\s*(?P<value>\d{1,2}\/\d{1,2}\/\d{4})'),
     'Shrinkage Factor': re.compile(r'Shrinkage Factor\s*(?P<value>[0-9.]*)'),
-    'GOR': re.compile(r'Flash Facto\s*(?P<value>[0-9.]*)'),
-    'blank': re.compile(r'zzzzzzzzzzzz\s*(?P<value>[0-9.]*)')
+    'GOR': re.compile(r'Flash Factor\s*(?P<value>[0-9.]*)')
 }
+
+def find_ext(dr, ext, ig_case=True):
+    if ig_case:
+        ext = "".join(["[{}]".format(ch + ch.swapcase()) for ch in ext])
+    return Path(dr).glob('**/*.'+ext)
 
 
 def get_img_page_numbers(PDF_file):
@@ -30,6 +36,7 @@ def get_img_page_numbers(PDF_file):
             page_num_list.append(pageNum)
 
     return page_num_list
+
 
 def get_pdf_text(PDF_file, page_num_list):
 
@@ -52,17 +59,43 @@ def get_pdf_text(PDF_file, page_num_list):
 
     return(text_list)
 
+
+def parse_page_text(page_text):
+    data = []
+    for key, rx in rx_dict.items():
+        match = rx.search(page_text)
+        if match is not None:
+            matched_dict = match.groupdict()
+            if matched_dict.get('value') is None:
+                data.append({key:matched_dict})
+            else:
+                matched_dict[key] = matched_dict['value'].strip()
+            del matched_dict['value']
+            data.append(matched_dict)
+    page_data = dict(ChainMap(*data))
+
+    return page_data
+
+
+def get_pdf_data(PDF_file):
+    page_num_list = get_img_page_numbers(PDF_file)
+
+    text_list = get_pdf_text(PDF_file, page_num_list)
+
+    pdf_data = []
+    for page_text in text_list:
+        page_data = parse_page_text(page_text)
+        if 'Shrinkage Factor' in page_data:
+            pdf_data.append(page_data)
+    
+    return pdf_data
+
+
 if __name__ == '__main__':
-    path = Path('Parser/Input').glob('**/*.pdf')
+    path = find_ext('Parser/Input','pdf',ig_case=True)
     for PDF_file in path:
-        page_num_list = get_img_page_numbers(PDF_file)
-        print(page_num_list)
+        pdf_data = get_pdf_data(PDF_file)
+        print(pdf_data)
 
-        text_list = get_pdf_text(PDF_file, page_num_list)
-        print(text_list[3])
 
-        data = []
-        for key, rx in rx_dict.items():
-            match = rx.search(text_list[4])
-            if match is not None:
-                print(match.groupdict())
+
