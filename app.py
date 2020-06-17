@@ -3,7 +3,10 @@ import sqlite3
 from sqlite3 import Error
 import tkinter.ttk as ttk
 import tkinter.messagebox as tkMessageBox
+import tkinter.filedialog as tkFileDialog
 import pandas as pd
+
+from Parser import ParserOCR
 
 
 sql_create_shrinkage_table = """ CREATE TABLE IF NOT EXISTS `shrinkage` ( 
@@ -52,8 +55,15 @@ def Read():
     txt_result.config(text="Successfully read the data from database", fg="black")
 
 
+def Import():
+    dr = tkFileDialog.askdirectory()
+    print(dr)
+    folder_data = ParserOCR.get_folder_data(dr)
+    print(folder_data)
+
+
 def OnSelected(event):
-    global mem_id;
+    global mem_id
     curItem = tree.focus()
     contents =(tree.item(curItem))
     selecteditem = contents['values']
@@ -134,7 +144,7 @@ password.grid(row=5, column=1)
 btn_read = Button(Buttons, width=10, text="Read", command=Read)
 btn_read.pack(side=LEFT)
 
-btn_import = Button(Buttons, width=10, text="Import", command=Read)
+btn_import = Button(Buttons, width=10, text="Import", command=Import)
 btn_import.pack(side=LEFT)
 
 
