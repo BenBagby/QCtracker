@@ -11,10 +11,10 @@ from Parser import ParserOCR
 
 sql_create_shrinkage_table = """ CREATE TABLE IF NOT EXISTS `shrinkage` ( 
                                     `sample_id` TEXT NOT NULL,
-                                    `analysis_date` TEXT NOT NULL,
                                     `sample_date` TEXT,
                                     `location` TEXT NOT NULL,
                                     `shrinkage` REAL NOT NULL,
+                                    `gor` REAL NOT NULL,                                    
                                     PRIMARY KEY(`sample_id`)
                                     ); """
 
@@ -33,7 +33,7 @@ root.resizable(0, 0)
 
 def Database():
     global conn, cursor
-    conn = sqlite3.connect(':memory:')
+    conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute(sql_create_shrinkage_table)
 
@@ -56,10 +56,24 @@ def Read():
 
 
 def Import():
+    Database()
     dr = tkFileDialog.askdirectory()
     print(dr)
+    #popup = Toplevel()
     folder_data = ParserOCR.get_folder_data(dr)
     print(folder_data)
+
+    for data in folder_data:
+        placeholders = ', '.join(['%s'] * len(data))
+        columns = ', '.join("`" + str(x).replace('/','_') + "`" for x in data.keys())
+        values = ', '.join("'" + str(x).replace('/','_') + "'" for x in data.values())
+        sql = "INSERT INTO `shrinkage` ( %s ) VALUES ( %s )" % (columns, values)
+        print(sql)
+        cursor.execute(sql)
+    cursor.close()
+    conn.commit()
+    conn.close()
+
 
 
 def OnSelected(event):
@@ -112,15 +126,15 @@ txt_title = Label(Top, width=900, font=('arial', 24), text = "Noble Shrinkage QC
 txt_title.pack()
 txt_firstname = Label(Forms, text="Sample ID:", font=('arial', 16), bd=15)
 txt_firstname.grid(row=0, sticky="e")
-txt_lastname = Label(Forms, text="Analysis Date:", font=('arial', 16), bd=15)
+txt_lastname = Label(Forms, text="Sample Date:", font=('arial', 16), bd=15)
 txt_lastname.grid(row=1, sticky="e")
-txt_gender = Label(Forms, text="Sample Date:", font=('arial', 16), bd=15)
+txt_gender = Label(Forms, text="Status:", font=('arial', 16), bd=15)
 txt_gender.grid(row=2, sticky="e")
 txt_address = Label(Forms, text="Location:", font=('arial', 16), bd=15)
 txt_address.grid(row=3, sticky="e")
 txt_username = Label(Forms, text="Shrinkage:", font=('arial', 16), bd=15)
 txt_username.grid(row=4, sticky="e")
-txt_password = Label(Forms, text="Password:", font=('arial', 16), bd=15)
+txt_password = Label(Forms, text="GOR:", font=('arial', 16), bd=15)
 txt_password.grid(row=5, sticky="e")
 txt_result = Label(Buttons)
 txt_result.pack(side=TOP)

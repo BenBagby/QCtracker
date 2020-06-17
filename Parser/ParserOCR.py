@@ -9,11 +9,11 @@ from collections import ChainMap
 
 
 rx_dict = {
-    'Sample Number': re.compile(r'CERTIFICATE OF ANALYSIS\s*(?P<value>[0-9]{8}[-][0-9]{3}[A-Z])'),
-    'Location': re.compile(r'Well\s*:\s*(?P<value>[\S\s]*)(?=\sSample Psig)'),
-    'Sample Date': re.compile(r'Sample Date\/Time:\s*(?P<value>\d{1,2}\/\d{1,2}\/\d{4})'),
-    'Shrinkage Factor': re.compile(r'Shrinkage Factor\s*(?P<value>[0-9.]*)'),
-    'GOR': re.compile(r'Flash Factor\s*(?P<value>[0-9.]*)')
+    'sample_id': re.compile(r'CERTIFICATE OF ANALYSIS\s*(?P<value>[0-9]{8}[-][0-9]{3}[A-Z])'),
+    'location': re.compile(r'Well\s*:\s*(?P<value>[\S\s]*)(?=\sSample Psig)'),
+    'sample_date': re.compile(r'Sample Date\/Time:\s*(?P<value>\d{1,2}\/\d{1,2}\/\d{4})'),
+    'shrinkage': re.compile(r'Shrinkage Factor\s*(?P<value>[0-9.]*)'),
+    'gor': re.compile(r'Flash Factor\s*(?P<value>[0-9.]*)')
 }
 
 def find_ext(dr, ext, ig_case=True):
@@ -85,7 +85,7 @@ def get_pdf_data(PDF_file):
     pdf_data = []
     for page_text in text_list:
         page_data = parse_page_text(page_text)
-        if 'Shrinkage Factor' in page_data:
+        if 'shrinkage' in page_data:
             pdf_data.append(page_data)
     
     return pdf_data
