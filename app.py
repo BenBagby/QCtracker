@@ -69,11 +69,15 @@ def Import():
         values = ', '.join("'" + str(x).replace('/','_') + "'" for x in data.values())
         sql = "INSERT INTO `shrinkage` ( %s ) VALUES ( %s )" % (columns, values)
         print(sql)
-        cursor.execute(sql)
+        try:
+            cursor.execute(sql)
+        except sqlite3.IntegrityError as e:
+            print("Integrity Error")
+            print(e)
     cursor.close()
     conn.commit()
     conn.close()
-
+    txt_result.config(text="Successfully imported data to database", fg="black")
 
 
 def OnSelected(event):
