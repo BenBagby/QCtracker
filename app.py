@@ -126,8 +126,8 @@ Forms.pack(side=TOP)
 Buttons = Frame(Left, width=300, height=100, bd=8, relief="raise")
 Buttons.pack(side=BOTTOM)
 RadioGroup = Frame(Forms)
-Include = Radiobutton(RadioGroup, text="Include", variable=STATUS, value="include", font=('arial', 16)).pack(side=LEFT)
-Exclude = Radiobutton(RadioGroup, text="Exclude", variable=STATUS, value="exclude", font=('arial', 16)).pack(side=LEFT)
+Include = Radiobutton(RadioGroup, text="include", variable=STATUS, value="include", font=('arial', 16)).pack(side=LEFT)
+Exclude = Radiobutton(RadioGroup, text="exclude", variable=STATUS, value="exclude", font=('arial', 16)).pack(side=LEFT)
 
 
 #==================================LABEL WIDGET=======================================
