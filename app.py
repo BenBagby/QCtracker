@@ -59,6 +59,7 @@ def Read():
     txt_result.config(text="Successfully read the data from database", fg="black")
 
 
+
 def Import():
     Database()
     dr = tkFileDialog.askdirectory()
@@ -190,9 +191,9 @@ tree.heading('lower_limit', text="lower_limit", anchor=W)
 tree.heading('upper_limit', text="upper_limit", anchor=W)
 tree.heading('status', text="status", anchor=W)
 tree.column('#0', stretch=NO, minwidth=0, width=0)
-tree.column('#1', stretch=YES, minwidth=0, width=80)
+tree.column('#1', stretch=YES, minwidth=0, width=110)
 tree.column('#2', stretch=YES, minwidth=0, width=100)
-tree.column('#3', stretch=NO, minwidth=0, width=65)
+tree.column('#3', stretch=NO, minwidth=0, width=75)
 tree.column('#4', stretch=NO, minwidth=0, width=60)
 tree.column('#5', stretch=NO, minwidth=0, width=80)
 tree.column('#6', stretch=NO, minwidth=0, width=80)
