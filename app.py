@@ -13,8 +13,12 @@ sql_create_shrinkage_table = """ CREATE TABLE IF NOT EXISTS `shrinkage` (
                                     `sample_id` TEXT NOT NULL,
                                     `sample_date` TEXT,
                                     `location` TEXT NOT NULL,
+                                    `gor` REAL NOT NULL, 
                                     `shrinkage` REAL NOT NULL,
-                                    `gor` REAL NOT NULL,                                    
+                                    `applied_average` REAL,
+                                    `lower_limit` REAL,
+                                    `upper_limit` REAL,  
+                                    `status` REAL,                                  
                                     PRIMARY KEY(`sample_id`)
                                     ); """
 
