@@ -41,7 +41,7 @@ def get_img_page_numbers(PDF_file):
 def get_pdf_text(PDF_file, page_num_list):
 
     with tempfile.TemporaryDirectory() as path:
-        pages = convert_from_path(PDF_file, output_folder=path)
+        pages = convert_from_path(PDF_file, output_folder=path, thread_count=10)
         image_counter = 1
 
         for page in pages:

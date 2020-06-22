@@ -58,7 +58,8 @@ def Read():
     conn.close()
     txt_result.config(text="Successfully read the data from database", fg="black")
 
-
+def calculate_qc():
+    pass
 
 def Import():
     Database()
