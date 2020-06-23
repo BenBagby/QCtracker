@@ -37,7 +37,7 @@ root.resizable(0, 0)
 
 def Database():
     global conn, cursor
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect('database copy 2.db')
     cursor = conn.cursor()
     cursor.execute(sql_create_shrinkage_table)
 
@@ -48,12 +48,12 @@ def Read():
     cursor.execute("SELECT * FROM `shrinkage`")
     fetch = cursor.fetchall()
     for data in fetch:
-        if data[4] > 0.8:
+        if data[8] == 'fail(include)':
             color_test = 'flag'
         else:
             color_test = 'no_flag'
-        tree.insert('', 'end', values=(data[0], data[1], data[2], data[3], data[4]), tags = (color_test,))
-    tree.tag_configure('flag', background = 'red')
+        tree.insert('', 'end', values=(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]), tags = (color_test,))
+    tree.tag_configure('flag', background = 'orange')
     cursor.close()
     conn.close()
     txt_result.config(text="Successfully read the data from database", fg="black")

@@ -6,11 +6,12 @@ from pathlib import Path
 import PyPDF2
 import re
 from collections import ChainMap
+import sqlite3
 
 
 rx_dict = {
     'sample_id': re.compile(r'CERTIFICATE OF ANALYSIS\s*(?P<value>[0-9]{8}[-][0-9]{3}[A-Z])'),
-    'location': re.compile(r'Well\s*:\s*(?P<value>[\S\s]*)(?=\sSample Psig)'),
+    'location': re.compile(r'Well\s*:\s*(?P<value>[\S\s]*?)(?=\sSample Psig| \/ )'),
     'sample_date': re.compile(r'Sample Date\/Time:\s*(?P<value>\d{1,2}\/\d{1,2}\/\d{4})'),
     'shrinkage': re.compile(r'Shrinkage Factor\s*(?P<value>[0-9.]*)'),
     'gor': re.compile(r'Flash Factor\s*(?P<value>[0-9.]*)')
@@ -104,6 +105,9 @@ def get_folder_data(folder_path):
 if __name__ == '__main__':
     folder_data = get_folder_data('Parser/Input')
     print(folder_data)
+
+    for data in folder_data:
+        print(data['location'])
 
 
 
