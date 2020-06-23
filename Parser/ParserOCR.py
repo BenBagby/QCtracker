@@ -6,7 +6,12 @@ from pathlib import Path
 import PyPDF2
 import re
 from collections import ChainMap
+
+#for testing
 import sqlite3
+import pandas as pd
+import datetime
+from dateutil.relativedelta import relativedelta
 
 
 rx_dict = {
@@ -104,10 +109,51 @@ def get_folder_data(folder_path):
 
 if __name__ == '__main__':
     folder_data = get_folder_data('Parser/Input')
-    print(folder_data)
-
+    conn = sqlite3.connect('database copy 2.db')
+    cursor = conn.cursor()
+    
+    sql_imp = "SELECT * from shrinkage WHERE location=? AND status NOT LIKE ?"
+    folder_data_calc = []
     for data in folder_data:
-        print(data['location'])
+        cursor.execute(sql_imp,(data['location'],'%'+'exclude'+'%'))
+        names = [x[0] for x in cursor.description]
+        records = cursor.fetchall()
+        df = pd.DataFrame(records, columns=names)
+        df = df.append(data,ignore_index = True)
+
+        df['sample_date'] =pd.to_datetime(df.sample_date)
+        df = df.sort_values(by='sample_date')
+        df.reset_index(drop=True, inplace = True)
+        df['status'] = df['status'].astype(str)
+
+        df['status'].replace('nan', 'empty', regex = True, inplace = True)
+        current_date = pd.to_datetime(data['sample_date'])
+
+        time_series = pd.to_datetime(df['sample_date'])
+        day1_time_series = time_series.apply(lambda dt: dt.replace(day = 1))
+        filter3 =  day1_time_series >= (current_date + relativedelta(months=-6)).replace(day = 1)
+        filter4 = time_series < current_date
+        reduced_df = df.where(  pd.Series(filter3) & pd.Series(filter4) ) 
+        
+        applied_average = reduced_df['shrinkage'].astype(float).mean()
+        lower_limit = applied_average * (1 - 0.04)
+        upper_limit = applied_average * (1 + 0.04)
+
+        if lower_limit <= float(data['shrinkage']) <= upper_limit:
+            status = 'pass'
+        else:
+            status = 'fail(exclude)'
+
+        #df = df.set_index('sample_id')
+        #df.at[data['sample_id'], 'applied_average'] = rolling_mean2
+        
+        data.update({'applied_average':applied_average, 'lower_limit':lower_limit, 'upper_limit':upper_limit, 'status':status})
+
+        folder_data_calc.append(data)
+    print(folder_data_calc)
+    
+
+      
 
 
 
