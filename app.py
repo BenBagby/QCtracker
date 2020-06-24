@@ -40,7 +40,7 @@ root.resizable(0, 0)
 
 def Database():
     global conn, cursor
-    conn = sqlite3.connect('database copy 2.db')
+    conn = sqlite3.connect('LIVE06232020.db')
     cursor = conn.cursor()
     cursor.execute(sql_create_shrinkage_table)
 
