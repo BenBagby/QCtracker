@@ -109,6 +109,11 @@ def get_folder_data(folder_path):
 
 if __name__ == '__main__':
     folder_data = get_folder_data('Parser/Input')
+    print(folder_data)
+    
+    
+    
+    '''
     conn = sqlite3.connect('database copy 2.db')
     cursor = conn.cursor()
     
@@ -151,6 +156,7 @@ if __name__ == '__main__':
 
         folder_data_calc.append(data)
     print(folder_data_calc)
+    '''
     
 
       
