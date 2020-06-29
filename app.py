@@ -21,7 +21,8 @@ sql_create_shrinkage_table = """ CREATE TABLE IF NOT EXISTS `shrinkage` (
                                     `applied_average` REAL,
                                     `lower_limit` REAL,
                                     `upper_limit` REAL,  
-                                    `status` REAL,                                  
+                                    `status` REAL,
+                                    `s_w` REAL,                                  
                                     PRIMARY KEY(`sample_id`)
                                     ); """
 
