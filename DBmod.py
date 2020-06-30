@@ -1,11 +1,11 @@
 import sqlite3
 
 
-conn = sqlite3.connect('LIVE06232020 test.db')
+conn = sqlite3.connect('LIVE06302020 test.db')
 cursor = conn.cursor()
 
-add_col = "ALTER TABLE shrinkage ADD COLUMN s_w REAL"
-#cursor.execute(add_col)
+add_col = "ALTER TABLE shrinkage ADD COLUMN gor_applied_average REAL"
+cursor.execute(add_col)
 
 
 master_query = "select * from sqlite_master"

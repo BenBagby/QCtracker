@@ -22,7 +22,8 @@ sql_create_shrinkage_table = """ CREATE TABLE IF NOT EXISTS `shrinkage` (
                                     `lower_limit` REAL,
                                     `upper_limit` REAL,  
                                     `status` REAL,
-                                    `s_w` REAL,                                  
+                                    `s_w` REAL,
+                                    `gor_applied_average` REAL,                                  
                                     PRIMARY KEY(`sample_id`)
                                     ); """
 
@@ -41,7 +42,7 @@ root.resizable(0, 0)
 
 def Database():
     global conn, cursor
-    conn = sqlite3.connect('LIVE06232020 test.db')
+    conn = sqlite3.connect('LIVE06302020 test.db')
     cursor = conn.cursor()
     cursor.execute(sql_create_shrinkage_table)
 

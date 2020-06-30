@@ -9,6 +9,7 @@ import sqlite3
 rx_dict = {
     'sample_id': re.compile(r'AnalysisNumber:\s*\S*(?P<value>[0-9]{8}[-][0-9]{3}[A-Z])'),
     'S&W': re.compile(r'Total Sediment and WaterASTM D-4007(?P<value>[0-9.]{4,5})(?=vol%)'),
+    'location': re.compile(r'Station Name:(?P<value>[\S\s]*?)(?=\s*Sample)')
 }
 
 def find_ext(dr, ext, ig_case=True):
@@ -69,10 +70,10 @@ def get_folder_data(folder_path):
 
 
 if __name__ == '__main__':
-    folder_data = get_folder_data('Parser/Input')
+    folder_data = get_folder_data('Parser/Output')
     #print(folder_data)
 
-    conn = sqlite3.connect('LIVE06232020 test.db')
+    conn = sqlite3.connect('LIVE06302020 test.db')
     cursor = conn.cursor()
 
     for data in folder_data:
@@ -81,13 +82,14 @@ if __name__ == '__main__':
         names = [x[0] for x in cursor.description]
         record = cursor.fetchone()
         if record is not None:
-            sql_upd = "UPDATE shrinkage SET s_w=? WHERE sample_id=?"
+            sql_upd = "UPDATE shrinkage SET s_w=?, location=? WHERE sample_id=?"
             if float(data['S&W']) == 0:
                 s_w = '0.025'
             else:
                 s_w = data['S&W']
 
-            cursor.execute(sql_upd,(s_w,data['sample_id']))
+            cursor.execute(sql_upd,(s_w,data['location'],data['sample_id']))
+            print(data['location'])
 
     conn.commit()
     cursor.close()
