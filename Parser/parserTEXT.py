@@ -3,9 +3,12 @@ import PyPDF2
 import re
 from collections import ChainMap
 
+#initial
+import sqlite3
+
 rx_dict = {
     'sample_id': re.compile(r'AnalysisNumber:\s*\S*(?P<value>[0-9]{8}[-][0-9]{3}[A-Z])'),
-    'S&W': re.compile(r'Total Sediment and WaterASTM D-4007(?P<value>[0-9.]{4})(?=vol%)'),
+    'S&W': re.compile(r'Total Sediment and WaterASTM D-4007(?P<value>[0-9.]{4,5})(?=vol%)'),
 }
 
 def find_ext(dr, ext, ig_case=True):
@@ -46,7 +49,6 @@ def parse_page_text(page_text):
 def get_pdf_data(PDF_file):
 
     text_list = get_pdf_text(PDF_file)
-    print(text_list)
 
     pdf_data = []
     for page_text in text_list:
@@ -67,5 +69,26 @@ def get_folder_data(folder_path):
 
 
 if __name__ == '__main__':
-    folder_data = get_folder_data('Parser/Temp')
-    print(folder_data)
+    folder_data = get_folder_data('Parser/Input')
+    #print(folder_data)
+
+    conn = sqlite3.connect('LIVE06232020 test.db')
+    cursor = conn.cursor()
+
+    for data in folder_data:
+        sql_sel = "SELECT * from shrinkage WHERE sample_id=?"
+        cursor.execute(sql_sel,(data['sample_id'],))
+        names = [x[0] for x in cursor.description]
+        record = cursor.fetchone()
+        if record is not None:
+            sql_upd = "UPDATE shrinkage SET s_w=? WHERE sample_id=?"
+            if float(data['S&W']) == 0:
+                s_w = '0.025'
+            else:
+                s_w = data['S&W']
+
+            cursor.execute(sql_upd,(s_w,data['sample_id']))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
