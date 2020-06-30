@@ -6,7 +6,7 @@ cursor = conn.cursor()
 
 cursor.execute("SELECT * FROM shrinkage")
 
-with open("export6.csv", "w") as csv_file:
+with open("export7.csv", "w") as csv_file:
     csv_writer = csv.writer(csv_file)
     csv_writer.writerow([i[0] for i in cursor.description])
     csv_writer.writerows(cursor)

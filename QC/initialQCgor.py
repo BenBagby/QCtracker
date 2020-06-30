@@ -29,8 +29,9 @@ def calculate_QC_params(df):
         time_series = pd.to_datetime(df['sample_date'])
         day1_time_series = time_series.apply(lambda dt: dt.replace(day = 1))
         filter3 =  day1_time_series >= (current_date + relativedelta(months=-6)).replace(day = 1)
-        filter4 = day1_time_series <= current_date
-        reduced_df = df.where(  (pd.Series(filter3) & pd.Series(filter4) & (pd.Series(filter1) | pd.Series(filter2) | pd.Series(filternan))) | pd.Series(filter0)  )
+        filter4 = df['sample_date'] < current_date
+        reduced_df = df.where(  ( pd.Series(filter3) & pd.Series(filter4) & (pd.Series(filter1) | pd.Series(filter2) | pd.Series(filternan))) | pd.Series(filter0)  )
+        #print(reduced_df)
         rolling_mean2 = reduced_df['shrinkage'].mean()
         gor_rolling_mean = reduced_df['gor'].mean()
         
@@ -74,7 +75,7 @@ if __name__ == '__main__':
         df = calculate_QC_params(df)
         df_out = df_out.append(df, ignore_index = True)
     
-    print(df_out)
+    #print(df_out)
     
     for index, row in df_out.iterrows():
         select_query = "SELECT * FROM shrinkage WHERE sample_id = ?"
