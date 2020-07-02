@@ -52,7 +52,7 @@ def calculate_QC_params(df):
             else:
                 df.at[index,'status'] = 'fail(exclude)'
     #print(reduced_df)
-    print(df)
+    #print(df)
     return df
 
 
@@ -75,7 +75,7 @@ if __name__ == '__main__':
         df = calculate_QC_params(df)
         df_out = df_out.append(df, ignore_index = True)
     
-    #print(df_out)
+    print(df_out)
     
     for index, row in df_out.iterrows():
         select_query = "SELECT * FROM shrinkage WHERE sample_id = ?"
