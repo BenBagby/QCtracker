@@ -42,9 +42,40 @@ root.resizable(0, 0)
 
 def Database():
     global conn, cursor
-    conn = sqlite3.connect('LIVE06302020 test.db')
+    #conn = sqlite3.connect('emptytest.db')
+    conn = sqlite3.connect('07092020 test.db')
     cursor = conn.cursor()
     cursor.execute(sql_create_shrinkage_table)
+
+
+def Create():
+    if  SAMPLEID.get() == "" or SAMPLEDATE.get() == "" or LOCATION.get() == "" or SHRINKAGE.get() == "" or GOR.get() == "":
+        print("sample_id",SAMPLEID.get())
+        print("sample_date",SAMPLEDATE.get())
+        print("location",LOCATION.get())
+        print("shrinkage",SHRINKAGE.get())
+        print("gor",GOR.get())
+        print("status",STATUS.get())
+
+        txt_result.config(text="Please complete the required field!", fg="red")
+    else:
+        Database()
+        cursor.execute("INSERT INTO `member` (firstname, lastname, gender, address, username, password) VALUES(?, ?, ?, ?, ?, ?)", (str(FIRSTNAME.get()), str(LASTNAME.get()), str(GENDER.get()), str(ADDRESS.get()), str(USERNAME.get()), str(PASSWORD.get())))
+        tree.delete(*tree.get_children())
+        cursor.execute("SELECT * FROM `member` ORDER BY `lastname` ASC")
+        fetch = cursor.fetchall()
+        for data in fetch:
+            tree.insert('', 'end', values=(data[0], data[1], data[2], data[3], data[4], data[5], data[6]))
+        conn.commit()
+        SAMPLEID.set("")
+        SAMPLEDATE.set("")
+        LOCATION.set("")
+        SHRINKAGE.set("")
+        GOR.set("")
+        STATUS.set("")
+        cursor.close()
+        conn.close()
+        txt_result.config(text="Created a data!", fg="green")
 
 
 def Read():
@@ -65,6 +96,34 @@ def Read():
     cursor.close()
     conn.close()
     txt_result.config(text="Successfully read the data from database", fg="black")
+
+
+def Update():
+    Database()
+    if GENDER.get() == "":
+        txt_result.config(text="Please select a gender", fg="red")
+    else:
+        tree.delete(*tree.get_children())
+        cursor.execute("UPDATE `member` SET `firstname` = ?, `lastname` = ?, `gender` =?,  `address` = ?,  `username` = ?, `password` = ? WHERE `mem_id` = ?", (str(FIRSTNAME.get()), str(LASTNAME.get()), str(GENDER.get()), str(ADDRESS.get()), str(USERNAME.get()), str(PASSWORD.get()), int(mem_id)))
+        conn.commit()
+        cursor.execute("SELECT * FROM `member` ORDER BY `lastname` ASC")
+        fetch = cursor.fetchall()
+        for data in fetch:
+            tree.insert('', 'end', values=(data[0], data[1], data[2], data[3], data[4], data[5], data[6]))
+        cursor.close()
+        conn.close()
+        FIRSTNAME.set("")
+        LASTNAME.set("")
+        GENDER.set("")
+        ADDRESS.set("")
+        USERNAME.set("")
+        PASSWORD.set("")
+        btn_create.config(state=NORMAL)
+        btn_read.config(state=NORMAL)
+        btn_update.config(state=DISABLED)
+        btn_delete.config(state=NORMAL)
+        txt_result.config(text="Successfully updated the data", fg="black")
+
 
 def calculate_qc(folder_data):
     Database()
@@ -157,6 +216,23 @@ def OnSelected(event):
     btn_update.config(state=NORMAL)
     btn_delete.config(state=DISABLED)
 
+def Delete():
+    if not tree.selection():
+       txt_result.config(text="Please select an item first", fg="red")
+    else:
+        result = tkMessageBox.askquestion('Python: Simple CRUD Applition', 'Are you sure you want to delete this record?', icon="warning")
+        if result == 'yes':
+            curItem = tree.focus()
+            contents =(tree.item(curItem))
+            selecteditem = contents['values']
+            tree.delete(curItem)
+            Database()
+            cursor.execute("DELETE FROM `member` WHERE `sample_id` = %d" % selecteditem[0])
+            conn.commit()
+            cursor.close()
+            conn.close()
+            txt_result.config(text="Successfully deleted the data", fg="black")
+
 
 #==================================VARIABLES==========================================
 SAMPLEID = StringVar()
@@ -186,18 +262,18 @@ Exclude = Radiobutton(RadioGroup, text="exclude", variable=STATUS, value="exclud
 #==================================LABEL WIDGET=======================================
 txt_title = Label(Top, width=900, font=('arial', 24), text = "Noble Shrinkage QC CRUD Application")
 txt_title.pack()
-txt_firstname = Label(Forms, text="Sample ID:", font=('arial', 16), bd=15)
-txt_firstname.grid(row=0, sticky="e")
-txt_lastname = Label(Forms, text="Sample Date:", font=('arial', 16), bd=15)
-txt_lastname.grid(row=1, sticky="e")
-txt_gender = Label(Forms, text="Status:", font=('arial', 16), bd=15)
-txt_gender.grid(row=2, sticky="e")
-txt_address = Label(Forms, text="Location:", font=('arial', 16), bd=15)
-txt_address.grid(row=3, sticky="e")
-txt_username = Label(Forms, text="Shrinkage:", font=('arial', 16), bd=15)
-txt_username.grid(row=4, sticky="e")
-txt_password = Label(Forms, text="GOR:", font=('arial', 16), bd=15)
-txt_password.grid(row=5, sticky="e")
+txt_sample_id = Label(Forms, text="Sample ID:", font=('arial', 16), bd=15)
+txt_sample_id.grid(row=0, sticky="e")
+txt_sample_date = Label(Forms, text="Sample Date:", font=('arial', 16), bd=15)
+txt_sample_date.grid(row=1, sticky="e")
+txt_status = Label(Forms, text="Status:", font=('arial', 16), bd=15)
+txt_status.grid(row=2, sticky="e")
+txt_location = Label(Forms, text="Location:", font=('arial', 16), bd=15)
+txt_location.grid(row=3, sticky="e")
+txt_shrinkage = Label(Forms, text="Shrinkage:", font=('arial', 16), bd=15)
+txt_shrinkage.grid(row=4, sticky="e")
+txt_gor = Label(Forms, text="GOR:", font=('arial', 16), bd=15)
+txt_gor.grid(row=5, sticky="e")
 txt_result = Label(Buttons)
 txt_result.pack(side=TOP)
 
@@ -217,12 +293,20 @@ gor.grid(row=5, column=1)
 
 
 #==================================BUTTONS WIDGET=====================================
+btn_create = Button(Buttons, width=10, text="Create", command=Create)
+btn_create.pack(side=LEFT)
+
 btn_read = Button(Buttons, width=10, text="Read", command=Read)
 btn_read.pack(side=LEFT)
 
-btn_import = Button(Buttons, width=10, text="Import", command=Import)
-btn_import.pack(side=LEFT)
+btn_update = Button(Buttons, width=10, text="Update", command=Update, state=DISABLED)
+btn_update.pack(side=LEFT)
 
+btn_delete = Button(Buttons, width=10, text="Delete", command=Delete)
+btn_delete.pack(side=LEFT)
+
+btn_import = Button(Buttons, width=10, text="Import", command=Import)
+btn_import.pack(side=BOTTOM)
 
 #==================================LIST WIDGET========================================
 column_tuple = ("sample_id", "sample_date", "location", "gor", "shrinkage", "applied_average", "lower_limit", "upper_limit", "status")
