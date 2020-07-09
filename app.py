@@ -164,6 +164,7 @@ ANALYSISDATE = StringVar()
 SAMPLEDATE = StringVar()
 LOCATION = StringVar()
 SHRINKAGE = StringVar()
+GOR = StringVar()
 STATUS = StringVar()
 
 #==================================FRAME==============================================
@@ -202,17 +203,17 @@ txt_result.pack(side=TOP)
 
 
 #==================================ENTRY WIDGET=======================================
-firstname = Entry(Forms, textvariable=SAMPLEID, width=30)
-firstname.grid(row=0, column=1)
-lastname = Entry(Forms, textvariable=ANALYSISDATE, width=30)
-lastname.grid(row=1, column=1)
+sample_id = Entry(Forms, textvariable=SAMPLEID, width=30)
+sample_id.grid(row=0, column=1)
+sample_date = Entry(Forms, textvariable=SAMPLEDATE, width=30)
+sample_date.grid(row=1, column=1)
 RadioGroup.grid(row=2, column=1)
-address = Entry(Forms, textvariable=SAMPLEDATE, width=30)
-address.grid(row=3, column=1)
-username = Entry(Forms, textvariable=LOCATION, width=30)
-username.grid(row=4, column=1)
-password = Entry(Forms, textvariable=SHRINKAGE, show="*", width=30)
-password.grid(row=5, column=1)
+location = Entry(Forms, textvariable=LOCATION, width=30)
+location.grid(row=3, column=1)
+shrinkage = Entry(Forms, textvariable=SHRINKAGE, width=30)
+shrinkage.grid(row=4, column=1)
+gor = Entry(Forms, textvariable=GOR, width=30)
+gor.grid(row=5, column=1)
 
 
 #==================================BUTTONS WIDGET=====================================
