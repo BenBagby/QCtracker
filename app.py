@@ -100,8 +100,8 @@ def Read():
 
 def Update():
     Database()
-    if GENDER.get() == "":
-        txt_result.config(text="Please select a gender", fg="red")
+    if STATUS.get() == "":
+        txt_result.config(text="Please select a status", fg="red")
     else:
         tree.delete(*tree.get_children())
         cursor.execute("UPDATE `member` SET `firstname` = ?, `lastname` = ?, `gender` =?,  `address` = ?,  `username` = ?, `password` = ? WHERE `mem_id` = ?", (str(FIRSTNAME.get()), str(LASTNAME.get()), str(GENDER.get()), str(ADDRESS.get()), str(USERNAME.get()), str(PASSWORD.get()), int(mem_id)))
