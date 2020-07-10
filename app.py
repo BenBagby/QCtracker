@@ -224,15 +224,17 @@ def OnSelected(event):
     selecteditem = contents['values']
     mem_id = selecteditem[0]
     SAMPLEID.set("")
-    ANALYSISDATE.set("")
     SAMPLEDATE.set("")
     LOCATION.set("")
     SHRINKAGE.set("")
-    SAMPLEID.set(selecteditem[1])
-    ANALYSISDATE.set(selecteditem[2])
-    SAMPLEDATE.set(selecteditem[3])
-    LOCATION.set(selecteditem[4])
-    SHRINKAGE.set(selecteditem[5])
+    GOR.set("")
+    STATUS.set("")
+    SAMPLEID.set(selecteditem[0])
+    SAMPLEDATE.set(selecteditem[1])
+    LOCATION.set(selecteditem[2])
+    SHRINKAGE.set(selecteditem[4])
+    GOR.set(selecteditem[3])
+    STATUS.set(selecteditem[8])
     btn_create.config(state=DISABLED)
     btn_read.config(state=DISABLED)
     btn_update.config(state=NORMAL)
@@ -266,8 +268,8 @@ Buttons = Frame(Left, width=300, height=100, bd=8, relief="raise")
 Buttons.pack(side=BOTTOM)
 
 RadioGroup = Frame(Forms)
-Include = Radiobutton(RadioGroup, text="include", variable=STATUS, value="include", font=('arial', 16)).pack(side=LEFT)
-Exclude = Radiobutton(RadioGroup, text="exclude", variable=STATUS, value="exclude", font=('arial', 16)).pack(side=LEFT)
+Include = Radiobutton(RadioGroup, text="include", variable=STATUS, value="fail(include)", font=('arial', 16)).pack(side=LEFT)
+Exclude = Radiobutton(RadioGroup, text="exclude", variable=STATUS, value="fail(exclude)", font=('arial', 16)).pack(side=LEFT)
 
 
 #==================================LABEL WIDGET=======================================
