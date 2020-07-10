@@ -125,6 +125,54 @@ def Update():
         txt_result.config(text="Successfully updated the data", fg="black")
 
 
+def Delete():
+    if not tree.selection():
+       txt_result.config(text="Please select an item first", fg="red")
+    else:
+        result = tkMessageBox.askquestion('Python: Simple CRUD Applition', 'Are you sure you want to delete this record?', icon="warning")
+        if result == 'yes':
+            curItem = tree.focus()
+            contents =(tree.item(curItem))
+            selecteditem = contents['values']
+            tree.delete(curItem)
+            Database()
+            cursor.execute("DELETE FROM `member` WHERE `sample_id` = %d" % selecteditem[0])
+            conn.commit()
+            cursor.close()
+            conn.close()
+            txt_result.config(text="Successfully deleted the data", fg="black")
+
+
+def Import():
+    Database()
+    dr = tkFileDialog.askdirectory()
+    print(dr)
+    #popup = Toplevel()
+    folder_data = ParserOCR.get_folder_data(dr)
+    print(folder_data)
+    folder_data_calc = calculate_qc(folder_data)
+
+    for data in folder_data_calc:
+        placeholders = ', '.join(['%s'] * len(data))
+        columns = ', '.join("`" + str(x).replace('/','_') + "`" for x in data.keys())
+        values = ', '.join("'" + str(x).replace('/','/') + "'" for x in data.values())
+        sql = "INSERT INTO `shrinkage` ( %s ) VALUES ( %s )" % (columns, values)
+        print(sql)
+        try:
+            cursor.execute(sql)
+        except sqlite3.IntegrityError as e:
+            print("Integrity Error")
+            print(e)
+    cursor.close()
+    conn.commit()
+    conn.close()
+    txt_result.config(text="Successfully imported data to database", fg="black")
+
+
+def Export():
+    pass
+
+
 def calculate_qc(folder_data):
     Database()
     
@@ -168,32 +216,6 @@ def calculate_qc(folder_data):
         folder_data_calc.append(data)
     return(folder_data_calc)
 
-def Import():
-    Database()
-    dr = tkFileDialog.askdirectory()
-    print(dr)
-    #popup = Toplevel()
-    folder_data = ParserOCR.get_folder_data(dr)
-    print(folder_data)
-    folder_data_calc = calculate_qc(folder_data)
-
-    for data in folder_data_calc:
-        placeholders = ', '.join(['%s'] * len(data))
-        columns = ', '.join("`" + str(x).replace('/','_') + "`" for x in data.keys())
-        values = ', '.join("'" + str(x).replace('/','/') + "'" for x in data.values())
-        sql = "INSERT INTO `shrinkage` ( %s ) VALUES ( %s )" % (columns, values)
-        print(sql)
-        try:
-            cursor.execute(sql)
-        except sqlite3.IntegrityError as e:
-            print("Integrity Error")
-            print(e)
-    cursor.close()
-    conn.commit()
-    conn.close()
-    txt_result.config(text="Successfully imported data to database", fg="black")
-
-
 
 def OnSelected(event):
     global mem_id
@@ -216,23 +238,6 @@ def OnSelected(event):
     btn_update.config(state=NORMAL)
     btn_delete.config(state=DISABLED)
 
-def Delete():
-    if not tree.selection():
-       txt_result.config(text="Please select an item first", fg="red")
-    else:
-        result = tkMessageBox.askquestion('Python: Simple CRUD Applition', 'Are you sure you want to delete this record?', icon="warning")
-        if result == 'yes':
-            curItem = tree.focus()
-            contents =(tree.item(curItem))
-            selecteditem = contents['values']
-            tree.delete(curItem)
-            Database()
-            cursor.execute("DELETE FROM `member` WHERE `sample_id` = %d" % selecteditem[0])
-            conn.commit()
-            cursor.close()
-            conn.close()
-            txt_result.config(text="Successfully deleted the data", fg="black")
-
 
 #==================================VARIABLES==========================================
 SAMPLEID = StringVar()
@@ -242,6 +247,7 @@ LOCATION = StringVar()
 SHRINKAGE = StringVar()
 GOR = StringVar()
 STATUS = StringVar()
+
 
 #==================================FRAME==============================================
 Top = Frame(root, width=900, height=50, bd=8, relief="raise")
@@ -307,6 +313,7 @@ btn_delete.pack(side=LEFT)
 
 btn_import = Button(Buttons, width=10, text="Import", command=Import)
 btn_import.pack(side=BOTTOM)
+
 
 #==================================LIST WIDGET========================================
 column_tuple = ("sample_id", "sample_date", "location", "gor", "shrinkage", "applied_average", "lower_limit", "upper_limit", "status")
