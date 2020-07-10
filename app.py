@@ -252,14 +252,19 @@ STATUS = StringVar()
 #==================================FRAME==============================================
 Top = Frame(root, width=900, height=50, bd=8, relief="raise")
 Top.pack(side=TOP)
+
 Left = Frame(root, width=300, height=500, bd=8, relief="raise")
 Left.pack(side=LEFT)
+
 Right = Frame(root, width=600, height=500, bd=8, relief="raise")
 Right.pack(side=RIGHT)
+
 Forms = Frame(Left, width=300, height=450)
 Forms.pack(side=TOP)
+
 Buttons = Frame(Left, width=300, height=100, bd=8, relief="raise")
 Buttons.pack(side=BOTTOM)
+
 RadioGroup = Frame(Forms)
 Include = Radiobutton(RadioGroup, text="include", variable=STATUS, value="include", font=('arial', 16)).pack(side=LEFT)
 Exclude = Radiobutton(RadioGroup, text="exclude", variable=STATUS, value="exclude", font=('arial', 16)).pack(side=LEFT)
@@ -268,18 +273,25 @@ Exclude = Radiobutton(RadioGroup, text="exclude", variable=STATUS, value="exclud
 #==================================LABEL WIDGET=======================================
 txt_title = Label(Top, width=900, font=('arial', 24), text = "Noble Shrinkage QC CRUD Application")
 txt_title.pack()
+
 txt_sample_id = Label(Forms, text="Sample ID:", font=('arial', 16), bd=15)
 txt_sample_id.grid(row=0, sticky="e")
+
 txt_sample_date = Label(Forms, text="Sample Date:", font=('arial', 16), bd=15)
 txt_sample_date.grid(row=1, sticky="e")
+
 txt_status = Label(Forms, text="Status:", font=('arial', 16), bd=15)
 txt_status.grid(row=2, sticky="e")
+
 txt_location = Label(Forms, text="Location:", font=('arial', 16), bd=15)
 txt_location.grid(row=3, sticky="e")
+
 txt_shrinkage = Label(Forms, text="Shrinkage:", font=('arial', 16), bd=15)
 txt_shrinkage.grid(row=4, sticky="e")
+
 txt_gor = Label(Forms, text="GOR:", font=('arial', 16), bd=15)
 txt_gor.grid(row=5, sticky="e")
+
 txt_result = Label(Buttons)
 txt_result.pack(side=TOP)
 
@@ -287,13 +299,18 @@ txt_result.pack(side=TOP)
 #==================================ENTRY WIDGET=======================================
 sample_id = Entry(Forms, textvariable=SAMPLEID, width=30)
 sample_id.grid(row=0, column=1)
+
 sample_date = Entry(Forms, textvariable=SAMPLEDATE, width=30)
 sample_date.grid(row=1, column=1)
+
 RadioGroup.grid(row=2, column=1)
+
 location = Entry(Forms, textvariable=LOCATION, width=30)
 location.grid(row=3, column=1)
+
 shrinkage = Entry(Forms, textvariable=SHRINKAGE, width=30)
 shrinkage.grid(row=4, column=1)
+
 gor = Entry(Forms, textvariable=GOR, width=30)
 gor.grid(row=5, column=1)
 
@@ -312,7 +329,10 @@ btn_delete = Button(Buttons, width=10, text="Delete", command=Delete)
 btn_delete.pack(side=LEFT)
 
 btn_import = Button(Buttons, width=10, text="Import", command=Import)
-btn_import.pack(side=BOTTOM)
+btn_import.pack(side=LEFT)
+
+btn_export = Button(Buttons, width=10, text="Export", command=Export)
+btn_export.pack(side=LEFT)
 
 
 #==================================LIST WIDGET========================================
@@ -320,10 +340,13 @@ column_tuple = ("sample_id", "sample_date", "location", "gor", "shrinkage", "app
 scrollbary = Scrollbar(Right, orient=VERTICAL)
 scrollbarx = Scrollbar(Right, orient=HORIZONTAL)
 tree = ttk.Treeview(Right, columns=("sample_id", "sample_date", "location", "gor", "shrinkage", "applied_average", "lower_limit", "upper_limit", "status"), selectmode="extended", height=500, yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
+
 scrollbary.config(command=tree.yview)
 scrollbary.pack(side=RIGHT, fill=Y)
+
 scrollbarx.config(command=tree.xview)
 scrollbarx.pack(side=BOTTOM, fill=X)
+
 tree.heading('sample_id', text="sample_id", anchor=W)
 tree.heading('sample_date', text="sample_date", anchor=W)
 tree.heading('location', text="location", anchor=W)
@@ -333,6 +356,7 @@ tree.heading('applied_average', text="applied_average", anchor=W)
 tree.heading('lower_limit', text="lower_limit", anchor=W)
 tree.heading('upper_limit', text="upper_limit", anchor=W)
 tree.heading('status', text="status", anchor=W)
+
 tree.column('#0', stretch=NO, minwidth=0, width=0)
 tree.column('#1', stretch=YES, minwidth=0, width=110)
 tree.column('#2', stretch=YES, minwidth=0, width=100)
